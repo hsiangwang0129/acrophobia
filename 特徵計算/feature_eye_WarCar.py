@@ -110,7 +110,7 @@ def blink_rate(openness):
             continue
     return blink_count/total_time    #待資料筆數等長時加入blink_count
 
-def fixation_count(data, time):
+def fixation_count(data, time): # data is df['gaze direction'] , time is the total time
     direction_X = []
     direction_Y = []
     direction_Z = []
@@ -228,8 +228,8 @@ def cut_by_timer(data, timer_data):
     return phase
 
 def feature_extract(data, path2):
-    game = eachArea(path2)
-    phase = cut_by_timer(data, game[['start_time', 'end_time']])
+    game = eachArea(path2) #prepocessing game.json
+    phase = cut_by_timer(data, game[['start_time', 'end_time']]) #return the df that divide by third round
     result_data = []
     for p in phase:
         time = (pd.to_datetime(p['timeStamp'][len(p)-1]) - pd.to_datetime(p['timeStamp'][0])).total_seconds()
@@ -243,18 +243,7 @@ def feature_extract(data, path2):
         temp_result.append(accumulate_gaze_angle(p['LeftGazeDirection'], time))
         temp_result.append(calculatePathLength(p['LeftEyePosition'], time))
         result_data.append(temp_result)
-    # time = (pd.to_datetime(data['timeStamp'][len(data)-1]) - pd.to_datetime(data['timeStamp'][0])).total_seconds()
-    # print(time)
-    # temp_result = []
-    # temp_result.append(blink_duration(data[['LeftEyeOpenness', 'timeStamp']]))
-    # temp_result.append((pupilDiameter(data['LeftEyePupilDiameter'])))
-    # temp_result = list(itertools.chain.from_iterable(temp_result))
-    # temp_result.append(blink_rate(data[['LeftEyeOpenness', 'timeStamp']]))
-    # temp_result.append(fixation_count(data['LeftGazeDirection'], time))
-    # temp_result.append(accumulate_gaze_angle(data['LeftGazeDirection'], time))
-    # temp_result.append(calculatePathLength(data['LeftEyePosition'], time))
-    # # temp_result.append(0)
-    # result_data.append(temp_result)
+
     return result_data
 
 def timer_process(path):
@@ -299,33 +288,12 @@ def read_data(path):
     # print(df)
     return df
 
-def data_prepro(path1, path2):
+def data_prepro(path1, path2): #path1 is the path of eye.json, path2 is the path of game.json
     data = read_data(path1)
-    # timer_data = timer_process(path2)
-    # phase_data = cut_by_timer(data, timer_data)
     total_features = feature_extract(data, path2)
-    # blink_duration.mean(), blink_duration.std(), blink_interval.mean(), blink_interval.std(), PERCLOS, diameter.mean(), diameter.std(), delta.mean(), delta.std(), pcps.mean(),
-    # blink_count/total_time, fixation_count/len(data), gaze_angle_accumulate/time, path/time
-    # for i in total_features:
-    #     print(i)
     return total_features
 
-# path = 'C:/Users/Jackson/OneDrive/LAB/資料/壓力訓練/測試資料/RestingState/202401150356_test_FPre/test_FPre_Eye.json'
-# path1 = 'C:/Users/Jackson/OneDrive/LAB/資料/壓力訓練/測試資料/WarCar/202403150456_N06_D_CPT/N06_D_CPT_Eye.json'
-# path2 = 'C:/Users/Jackson/OneDrive/LAB/資料/壓力訓練/測試資料/WarCar/202403150456_N06_D_CPT/N06_D_CPT_Game.json'
-# path1 = 'C:/Users/Jackson/OneDrive/LAB/資料/壓力訓練/測試資料/WarCar/202403150424_N06_D_Stroop/N06_D_Stroop_Eye.json'
-# path2 = 'C:/Users/Jackson/OneDrive/LAB/資料/壓力訓練/測試資料/WarCar/202403150424_N06_D_Stroop/N06_D_Stroop_Game.json'
-# temp = data_prepro(path1, path2)
-# print(temp)
-# final_data = pd.DataFrame(temp, columns = ['blink_duration_m', 'blink_duration_std',
-#                                                  'blink_interval_m', 'blink_interval_std',
-#                                                  'diam_mean', 'diam_std', 'diam_delta_mean', 'diam_delta_std', 'pcps_mean',
-#                                                  'blink_rate', 'fixation_count/time', 'gaze_angle/time', 'path/time'])
-# final_data.to_csv('C:/Users/Jackson/Downloads/result.csv')
-# path = 'C:/Users/Jackson/OneDrive/LAB/資料/壓力訓練/正式收案/WarCar'
-# path = 'C:/Users/Jackson/OneDrive/LAB/資料/壓力訓練/正式收案/WarCar/General第二次/CPT'
-# path = 'C:/Users/Jackson/OneDrive/LAB/資料/壓力訓練/正式收案/WarCar/General第二次/Stroop'
-# path = 'C:/Users/Jackson/OneDrive/LAB/資料/壓力訓練/正式收案/WarCar/Sport第二次/CPT'
+
 path = 'C:/Users/Jackson/OneDrive/LAB/資料/壓力訓練/正式收案/WarCar/Sport第二次/Stroop'
 # path = 'C:/Users/Jackson/OneDrive/LAB/資料/壓力訓練/正式收案/測試用'
 data_path = Path(path)
@@ -382,124 +350,3 @@ def grouping_prepro(start , end):
   
     return  total_case , total_label
 
-# total_case , total_label = grouping_prepro(1 , 26)
-# final_data = pd.DataFrame(total_case, columns = ['blink_duration_m', 'blink_duration_std',
-#                                                  'blink_interval_m', 'blink_interval_std',
-#                                                  'diam_mean', 'diam_std', 'diam_delta_mean', 'diam_delta_std', 'pcps_mean',
-#                                                  'blink_rate', 'fixation_count/time', 'gaze_angle/time', 'path/time'])
-# final_data['label'] = total_label
-
-# final_data.to_csv('C:/Users/Jackson/Downloads/result.csv')
-
-# path = 'C:/Users/Jackson/OneDrive/LAB/VR_Driving/output/war_jeep_read/N20/_N20_LeftEyeTrackData.json'
-# strData = open(path, 'r', encoding='utf-8').read()
-# listData = strData.split('\n')
-# listData = listData[:len(listData)-1]
-# time = []
-# pupil = []
-# openness = []
-# gaze_X = []
-# gaze_Y = []
-# gaze_Z = []
-# gaze = []
-# data_tpog = [] #time pupil openness gaze
-# for data in listData:
-#     # data = json.loads(data)['pupil_diameter_mm']['eye_openness']
-#     # temp_data.append(data)
-#     time.append(json.loads(data)['Timestamp'])
-#     pupil.append(json.loads(data)['pupil_diameter_mm'])
-#     openness.append(json.loads(data)['eye_openness'])
-#     # gaze_X.append(json.loads(data)['gaze_direction_normalized']['X'])
-#     # gaze_Y.append(json.loads(data)['gaze_direction_normalized']['Y'])
-#     # gaze_Z.append(json.loads(data)['gaze_direction_normalized']['Z'])
-#     gaze.append(json.loads(data)['gaze_direction_normalized'])
-
-#     temp = []
-#     temp.append(json.loads(data)['Timestamp'])
-#     temp.append(json.loads(data)['pupil_diameter_mm'])
-#     temp.append(json.loads(data)['eye_openness'])
-#     # temp.append(json.loads(data)['gaze_direction_normalized']['X'])
-#     # temp.append(json.loads(data)['gaze_direction_normalized']['Y'])
-#     # temp.append(json.loads(data)['gaze_direction_normalized']['Z'])
-#     temp.append(json.loads(data)['gaze_direction_normalized'])
-
-#     data_tpog.append(temp)
-# # print(gaze)
-# # print(data_tpog)
-
-# df = []
-# # df = pd.DataFrame(data_tpog,columns=['Timestamp', 'pupil_diameter_mm', 'eye_openness', 'X', 'Y', 'Z'])
-# df = pd.DataFrame(data_tpog,columns=['Timestamp', 'pupil_diameter_mm', 'eye_openness', 'gaze'])
-# # print(df)
-# temp =pd.to_datetime(df['Timestamp']) 
-# # print(temp)
-# df = df.drop(columns= ['Timestamp'])
-# df['Timestamp'] = temp
-# # print(df)  
-# df_list = df.values.tolist()
-# # print(df_list)
-# new_t = []
-# for t in df['Timestamp']: 
-#     # print(t)
-#     new_t.append(t)
-# # print(df)
-
-
-# count = 0
-# var = df['Timestamp'][0]
-# phase = []
-# temp_phase_pupil =[]
-# temp_phase_openness =[]
-# temp_phase_gaze =[]
-# temp_phase_time =[]
-# # print(var)
-# for ind in df.index :
-#     # print(df.iloc[ind]) 
-#     # print(df['Timestamp'][ind]) 
-#     if df['Timestamp'][ind] - var <= timedelta(seconds=60) :
-#         # print(df['Timestamp'][ind] - var)
-#         temp_phase_pupil.append(df['pupil_diameter_mm'][ind])
-#         temp_phase_openness.append(df['eye_openness'][ind])
-#         temp_phase_gaze.append(df['gaze'][ind])
-#         temp_phase_time.append(df['Timestamp'][ind])
-#         count += 1
-#     else :
-#         dic = {"pupil_diameter_mm": temp_phase_pupil, "eye_openness": temp_phase_openness,"gaze": temp_phase_gaze, "Timestamp": temp_phase_time}
-#         temp_df = pd.DataFrame(dic)
-#         phase.append(temp_df)
-#         count = 1   #因為底下要append一次切換的  所以初始1才去上面跑if的count
-#         var = df['Timestamp'][ind]
-#         temp_phase_pupil =[]
-#         temp_phase_openness =[]
-#         temp_phase_gaze =[]
-#         temp_phase_time =[]
-#         temp_phase_pupil.append(df['pupil_diameter_mm'][ind])
-#         temp_phase_openness.append(df['eye_openness'][ind])
-#         temp_phase_gaze.append(df['gaze'][ind])
-#         temp_phase_time.append(df['Timestamp'][ind])
-
-# print(count)
-# print(phase)
-# print(len(phase))
-
-
-# import itertools
-# result_data = []
-# for data in phase :
-#     temp_result = []
-#     temp_result.append(blink_duration(data[['eye_openness', 'Timestamp']]))
-#     temp_result.append((pupilDiameter(data['pupil_diameter_mm'])))
-#     temp_result = list(itertools.chain.from_iterable(temp_result))
-#     temp_result.append(blink_rate(data[['eye_openness', 'Timestamp']]))
-#     temp_result.append(fixation_count(data['gaze']))
-#     # temp_result.append(0)
-#     result_data.append(temp_result)
-
-# print(result_data)
-
-# final_data = pd.DataFrame(result_data, columns = ['blink_duration_m', 'blink_duration_std',
-#                                                  'blink_interval_m', 'blink_interval_std',
-#                                                  'diam_mean', 'diam_std', 'diam_delta_mean', 'diam_delta_std',
-#                                                  'blink_rate', 'fixation_count'])
-
-# final_data.to_csv('C:/Users/Jackson/Downloads/result.csv')

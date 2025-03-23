@@ -67,6 +67,8 @@ class Eye:
         print(df.head(50))
         return df
 
+
+
     def preprocessing(self):
         pass
 
@@ -74,6 +76,4 @@ class Eye:
 
 
 
-newEye = Eye()
-newEye.load_focus()
-    
+

@@ -4,6 +4,15 @@ class Eye:
     def __init__(self):
         
         pass
+    
+    def __enter__(self):
+        return self
+    
+    def __exit__(self, *exc_info):
+        self.close()
+        
+    def close(self):
+        pass
 
     def load_gaze(self) -> pd.DataFrame:
         path = '/Users/shawn/Desktop/acrophobia/elevatordata/54273/acrophobiapico_elevator_20241108033202_EyeCombinedData.json'
@@ -66,12 +75,31 @@ class Eye:
         df = pd.DataFrame(eye_data,columns=['Timestamp', 'FocusName', 'FocusPoint','FocusNormal','FocusDistance'])
         print(df.head(50))
         return df
-
-
-
+    
+    def load_openness(self) -> pd.DataFrame:
+        path = rf"elevatordata\54273\acrophobiapico_elevator_20241108033202_EyeLeftRightData.json"
+        str_data = open(path, 'r', encoding='utf-8-sig').read()
+        listData = str_data.split('\n')
+        listData = listData[:len(listData)-1]
+        eye_data = []
+        for data in listData:
+            json_data = json.loads(data)
+            temp = []
+            temp.append(json_data['Timestamp'].replace('+08:00',''))
+            temp.append(json_data['LeftEyeOpenness'])
+            temp.append(json_data['RightEyeOpenness'])
+            eye_data.append(temp)
+        df = pd.DataFrame(eye_data, columns=['Timestamp','LeftEyeOpenness','RightEyeOpenness'])
+        df['Timestamp'] = pd.to_datetime(df['Timestamp'])
+        print(df.head(50))
+        return df
+    
     def preprocessing(self):
         pass
 
+if __name__ == "__main__":
+    with Eye() as eye:
+        eye.load_openness()
 
 
 

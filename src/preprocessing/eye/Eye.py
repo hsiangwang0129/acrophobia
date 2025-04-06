@@ -58,7 +58,7 @@ class Eye:
         return df
         
     def load_focus(self) -> pd.DataFrame:
-        path = '/Users/shawn/Desktop/acrophobia/elevatordata/54273/acrophobiapico_elevator_20241108033202_EyeFocusData.json'
+        path = rf'elevatordata\54273\acrophobiapico_elevator_20241108033202_EyeFocusData.json'
         strData = open(path, 'r', encoding='utf-8-sig').read()
         listData = strData.split('\n')
         listData = listData[:len(listData)-1]

@@ -6,7 +6,7 @@ import json  # 用於處理 JSON 格式數據
 import traceback  # 用於處理和格式化異常
 
 # 計算固定注視次數
-def fixation_count(data, time):  
+def fixation_count(data:pd.DataFrame, time:float) -> float:  
     """
     計算用戶的固定注視次數（Fixation Count）。
     固定注視是指視線在一段時間內保持穩定，通常用於衡量專注程度。
@@ -70,7 +70,7 @@ def fixation_count(data, time):
     return fixation_count / time
 
 # 計算兩個向量之間的角度
-def calculate_angle(v1, v2):
+def calculate_angle(v1:torch.Tensor, v2:torch.Tensor) -> float:
     """
     計算兩個向量之間的角度（以度為單位）。
 
@@ -94,7 +94,7 @@ def calculate_angle(v1, v2):
     return degrees
 
 # 累積序列的變化量
-def accumulate_on_series(series):
+def accumulate_on_series(series:list) -> float:
     """
     計算序列中相鄰元素之間變化量的累積和。
 
@@ -110,7 +110,7 @@ def accumulate_on_series(series):
     return accumulate
 
 # 計算視線角度的累積變化量
-def accumulate_gaze_angle(data, time):
+def accumulate_gaze_angle(data:pd.DataFrame, time:float) -> float:
     """
     計算視線方向的角度累積變化量。
 
@@ -157,7 +157,7 @@ def accumulate_gaze_angle(data, time):
     return output / time  # 標準化
 
 # 特徵提取
-def feature_extract(df):
+def feature_extract(df:pd.DataFrame) -> list:
     """
     從數據框中提取特徵。
 
@@ -186,7 +186,7 @@ def feature_extract(df):
     return result_data
 
 # 將數據分段
-def split_phases(df):
+def split_phases(df:pd.DataFrame) -> dict:
     """
     將數據按時間分段。
 
@@ -219,7 +219,7 @@ def split_phases(df):
     return phase_dict
 
 # 按時間窗口分段數據
-def split_by_time_window(df, window_size):
+def split_by_time_window(df:pd.DataFrame, window_size:int) -> list:
     """
     將數據按固定時間窗口大小分段。
 
@@ -251,7 +251,7 @@ def split_by_time_window(df, window_size):
     return windows
 
 # 計算每個時間窗口的特徵
-def calculate_window_features(windows):
+def calculate_window_features(windows:list):
     """
     計算每個時間窗口的特徵。
 
